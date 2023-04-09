@@ -14,7 +14,7 @@ public class ProductManager {
 
     public void save(Product product) {
         String sql = "INSERT INTO product (name,description,price,quantity,category_id) Values(?,?,?,?,?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, product.getName());
             ps.setString(2, product.getDescription());
             ps.setString(3, String.valueOf(product.getPrice()));
@@ -22,7 +22,7 @@ public class ProductManager {
             ps.setString(5, String.valueOf(product.getCategory().getId()));
             ps.executeUpdate();
             ResultSet generatedKeys = ps.getGeneratedKeys();
-            if(generatedKeys.next()){
+            if (generatedKeys.next()) {
                 product.setId(generatedKeys.getInt(1));
             }
             System.out.println("Product was inserted!");
@@ -60,6 +60,18 @@ public class ProductManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Product getProductByCategory(int id) {
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT * from product where category_id = " + id);
+            if (resultSet.next()) {
+                return getProductFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public int getSum() {

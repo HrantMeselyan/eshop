@@ -124,7 +124,12 @@ public class Main {
         printAllCategories();
         System.out.println("Please choose category by id");
         int id = Integer.parseInt(scanner.nextLine());
-        categoryManager.removeById(id);
+        if (productManager.getProductByCategory(id) != null) {
+            System.out.println("You can`t delete category by id " + id + "because he have products!");
+        } else {
+            categoryManager.removeById(id);
+            System.out.println("Category was deleted!");
+        }
     }
 
     private static void editCategoryById() {
