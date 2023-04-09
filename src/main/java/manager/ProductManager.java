@@ -14,13 +14,17 @@ public class ProductManager {
 
     public void save(Product product) {
         String sql = "INSERT INTO product (name,description,price,quantity,category_id) Values(?,?,?,?,?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, product.getName());
             ps.setString(2, product.getDescription());
             ps.setString(3, String.valueOf(product.getPrice()));
             ps.setString(4, String.valueOf(product.getQuantity()));
             ps.setString(5, String.valueOf(product.getCategory().getId()));
             ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if(generatedKeys.next()){
+                product.setId(generatedKeys.getInt(1));
+            }
             System.out.println("Product was inserted!");
         } catch (SQLException e) {
             e.printStackTrace();
