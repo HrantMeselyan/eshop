@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static Scanner scanner = new Scanner(System.in);
-    private static CategoryManager categoryManager = new CategoryManager();
-    private static ProductManager productManager = new ProductManager();
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final CategoryManager categoryManager = new CategoryManager();
+    private static final ProductManager productManager = new ProductManager();
 
     public static void main(String[] args) {
         boolean isRun = true;
-
         while (isRun) {
             System.out.println("Please input 0 for exit");
             System.out.println("Please input 1 for Add Category");
@@ -85,7 +84,11 @@ public class Main {
         printAllProducts();
         System.out.println("Please choose product by id");
         int id = Integer.parseInt(scanner.nextLine());
-        productManager.removeById(id);
+        if (categoryManager.getById(id) != null) {
+            productManager.removeById(id);
+        } else {
+            System.out.println("Wrong id please try again!");
+        }
     }
 
     private static void editProductById() {
@@ -95,41 +98,50 @@ public class Main {
         System.out.println("Please choose new category");
         printAllCategories();
         int categoryId = Integer.parseInt(scanner.nextLine());
-        System.out.println("Please input product name,description,price,quantity");
-        String productStr = scanner.nextLine();
-        String[] productData = productStr.split(",");
-        Product product = new Product();
-        product.setId(productId);
-        product.setName(productData[0]);
-        product.setDescription(productData[1]);
-        product.setPrice(Integer.parseInt(productData[2]));
-        product.setQuantity(Integer.parseInt(productData[3]));
-        product.setCategory(categoryManager.getById(categoryId));
-        productManager.update(product);
+        if (categoryManager.getById(categoryId) != null) {
+            System.out.println("Please input product name,description,price,quantity");
+            String productStr = scanner.nextLine();
+            String[] productData = productStr.split(",");
+            Product product = new Product();
+            product.setId(productId);
+            product.setName(productData[0]);
+            product.setDescription(productData[1]);
+            product.setPrice(Integer.parseInt(productData[2]));
+            product.setQuantity(Integer.parseInt(productData[3]));
+            product.setCategory(categoryManager.getById(categoryId));
+            productManager.update(product);
+            System.out.println("Product was updated!");
+        } else {
+            System.out.println("Wrong id please try again!");
+        }
     }
 
     private static void addProduct() {
         printAllCategories();
         System.out.println("Please choose category id");
         int id = Integer.parseInt(scanner.nextLine());
-        System.out.println("Please input product name,description,price,quantity");
-        String productStr = scanner.nextLine();
-        String[] productData = productStr.split(",");
-        Product product = new Product();
-        product.setName(productData[0]);
-        product.setDescription(productData[1]);
-        product.setPrice(Integer.parseInt(productData[2]));
-        product.setQuantity(Integer.parseInt(productData[3]));
-        product.setCategory(categoryManager.getById(id));
-        productManager.save(product);
+        if (categoryManager.getById(id) != null) {
+            System.out.println("Please input product name,description,price,quantity");
+            String productStr = scanner.nextLine();
+            String[] productData = productStr.split(",");
+            Product product = new Product();
+            product.setName(productData[0]);
+            product.setDescription(productData[1]);
+            product.setPrice(Integer.parseInt(productData[2]));
+            product.setQuantity(Integer.parseInt(productData[3]));
+            product.setCategory(categoryManager.getById(id));
+            productManager.save(product);
+        } else {
+            System.out.println("Wrong id please try again!");
+        }
     }
 
     private static void deleteCategoryById() {
         printAllCategories();
         System.out.println("Please choose category by id");
         int id = Integer.parseInt(scanner.nextLine());
-        if (productManager.getProductByCategory(id) != null) {
-            System.out.println("You can`t delete category by id " + id + " because he have products!");
+        if (productManager.getProductByCategory(id) != null && categoryManager.getById(id) != null) {
+            System.out.println("You can`t delete category by id " + id + " please input another id!");
         } else {
             categoryManager.removeById(id);
             System.out.println("Category was deleted!");
@@ -140,13 +152,17 @@ public class Main {
         printAllCategories();
         System.out.println("Please choose category by id");
         int id = Integer.parseInt(scanner.nextLine());
-        System.out.println("Please input name");
-        String name = scanner.nextLine();
-        Category category = new Category();
-        category.setId(id);
-        category.setName(name);
-        categoryManager.update(category);
-        System.out.println("Category was updated");
+        if (categoryManager.getById(id) != null) {
+            System.out.println("Please input name");
+            String name = scanner.nextLine();
+            Category category = new Category();
+            category.setId(id);
+            category.setName(name);
+            categoryManager.update(category);
+            System.out.println("Category was updated");
+        } else {
+            System.out.println("Wrong id please try again!");
+        }
     }
 
     private static void addCategory() {

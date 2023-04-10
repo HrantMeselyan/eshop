@@ -85,7 +85,7 @@ public class ProductManager {
 
     public int getSum() {
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM product");
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(id) FROM product");
             if (resultSet.next()) {
                 return resultSet.getInt(1);
             }

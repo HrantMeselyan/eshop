@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryManager {
-    private Connection connection = DBConnectionProvider.getInstance().getConnection();
+    private final Connection connection = DBConnectionProvider.getInstance().getConnection();
 
     public void save(Category category) {
         String sql = "INSERT INTO category (name) Values(?)";
