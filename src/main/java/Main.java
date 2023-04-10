@@ -91,16 +91,20 @@ public class Main {
     private static void editProductById() {
         System.out.println("Please choose product id");
         printAllProducts();
-        int id = Integer.parseInt(scanner.nextLine());
+        int productId = Integer.parseInt(scanner.nextLine());
+        System.out.println("Please choose new category");
+        printAllCategories();
+        int categoryId = Integer.parseInt(scanner.nextLine());
         System.out.println("Please input product name,description,price,quantity");
         String productStr = scanner.nextLine();
         String[] productData = productStr.split(",");
         Product product = new Product();
-        product.setId(id);
+        product.setId(productId);
         product.setName(productData[0]);
         product.setDescription(productData[1]);
         product.setPrice(Integer.parseInt(productData[2]));
         product.setQuantity(Integer.parseInt(productData[3]));
+        product.setCategory(categoryManager.getById(categoryId));
         productManager.update(product);
     }
 
@@ -125,7 +129,7 @@ public class Main {
         System.out.println("Please choose category by id");
         int id = Integer.parseInt(scanner.nextLine());
         if (productManager.getProductByCategory(id) != null) {
-            System.out.println("You can`t delete category by id " + id + "because he have products!");
+            System.out.println("You can`t delete category by id " + id + " because he have products!");
         } else {
             categoryManager.removeById(id);
             System.out.println("Category was deleted!");

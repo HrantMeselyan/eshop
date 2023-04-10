@@ -45,26 +45,35 @@ public class ProductManager {
     }
 
     public void update(Product product) {
-        String sql = "UPDATE product SET name = '%s', description = '%s', price = %d, quantity = %d WHERE id = %d";
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(String.format(sql, product.getName(), product.getDescription(), product.getPrice(), product.getQuantity(), product.getId()));
+        String sql = "UPDATE product SET name = ?, description = ?, price = ?, quantity = ?,category_id = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1,product.getName());
+            ps.setString(2,product.getDescription());
+            ps.setInt(3,product.getPrice());
+            ps.setInt(4,product.getQuantity());
+            ps.setInt(5,product.getCategory().getId());
+            ps.setInt(6,product.getId());
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void removeById(int id) {
-        String sql = "DELETE FROM product where id = " + id;
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(sql);
+        String sql = "DELETE FROM product where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public Product getProductByCategory(int id) {
-        try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * from product where category_id = " + id);
+        String sql = "SELECT * from product where category_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
                 return getProductFromResultSet(resultSet);
             }

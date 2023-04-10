@@ -38,26 +38,35 @@ public class CategoryManager {
     }
 
     public void update(Category category) {
-        String sql = "UPDATE category Set name = '%s' where id = %d ";
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(String.format(sql, category.getName(), category.getId()));
+        String sql = "UPDATE category Set name = ? where id = ? ";
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, category.getName());
+            ps.setInt(2, category.getId());
+            ps.executeUpdate();
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                category.setId(generatedKeys.getInt(1));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void removeById(int id) {
-        String sql = "DELETE FROM category where id = " + id;
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(sql);
+        String sql = "DELETE FROM category where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public Category getById(int id) {
-        try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * from category where id = " + id);
+        String sql = "SELECT * from category where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
                 return getCategoryFromResultSet(resultSet);
             }
