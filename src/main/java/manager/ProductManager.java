@@ -1,6 +1,7 @@
 package manager;
 
 import db.DBConnectionProvider;
+import model.Category;
 import model.Product;
 
 import java.sql.*;
@@ -130,6 +131,19 @@ public class ProductManager {
         }
         return -1;
     }
+    public Product getById(int id) {
+        String sql = "SELECT * from product where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            ResultSet resultSet = ps.executeQuery();
+            if (resultSet.next()) {
+                return getProductFromResultSet(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private Product getProductFromResultSet(ResultSet resultSet) throws SQLException {
         Product product = new Product();
@@ -142,4 +156,5 @@ public class ProductManager {
         product.setCategory(categoryManager.getById(categoryId));
         return product;
     }
+
 }

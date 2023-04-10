@@ -84,7 +84,7 @@ public class Main {
         printAllProducts();
         System.out.println("Please choose product by id");
         int id = Integer.parseInt(scanner.nextLine());
-        if (categoryManager.getById(id) != null) {
+        if (productManager.getById(id) != null) {
             productManager.removeById(id);
         } else {
             System.out.println("Wrong id please try again!");
@@ -98,7 +98,7 @@ public class Main {
         System.out.println("Please choose new category");
         printAllCategories();
         int categoryId = Integer.parseInt(scanner.nextLine());
-        if (categoryManager.getById(categoryId) != null) {
+        if (categoryManager.getById(categoryId) != null && productManager.getById(productId) != null) {
             System.out.println("Please input product name,description,price,quantity");
             String productStr = scanner.nextLine();
             String[] productData = productStr.split(",");
@@ -140,7 +140,7 @@ public class Main {
         printAllCategories();
         System.out.println("Please choose category by id");
         int id = Integer.parseInt(scanner.nextLine());
-        if (productManager.getProductByCategory(id) != null && categoryManager.getById(id) != null) {
+        if (productManager.getProductByCategory(id) != null || categoryManager.getById(id) == null) {
             System.out.println("You can`t delete category by id " + id + " please input another id!");
         } else {
             categoryManager.removeById(id);
